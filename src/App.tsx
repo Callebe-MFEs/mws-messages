@@ -1,7 +1,7 @@
 // import { useState } from "react";
 // import reactLogo from "./assets/react.svg";
 // import viteLogo from "/vite.svg";
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 import styles from "./App.module.scss";
 
 type Message = {
@@ -9,8 +9,12 @@ type Message = {
   type: "mine" | "theirs";
 };
 
+type User = {
+  name: string;
+};
+
 function App() {
-  const users = [
+  const users: User[] = [
     { name: "Gandalf the Grey" },
     { name: "Iron Man" },
     { name: "James Bond" },
@@ -24,7 +28,7 @@ function App() {
 
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!message) return;
     const mineMessage: Message = { message, type: "mine" };
@@ -33,7 +37,7 @@ function App() {
     setMessage("");
   };
 
-  const selectUser = (user) => {
+  const selectUser = (user: User) => {
     setContact(user);
     setMessages([]);
   };
