@@ -1,35 +1,81 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { useState } from "react";
+// import reactLogo from "./assets/react.svg";
+// import viteLogo from "/vite.svg";
+import { useState } from "react";
+import styles from "./App.module.scss";
+
+type Message = {
+  message: string;
+  type: "mine" | "theirs";
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const users = [
+    { name: "Gandalf the Grey" },
+    { name: "Iron Man" },
+    { name: "James Bond" },
+    { name: "Pelé" },
+    { name: "Sherlock Holmes" },
+  ];
+
+  const [contact, setContact] = useState(users[0]);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!message) return;
+    const mineMessage: Message = { message, type: "mine" };
+    const theirsMessage: Message = { message, type: "theirs" };
+    setMessages([theirsMessage, mineMessage, ...messages]);
+    setMessage("");
+  };
+
+  const selectUser = (user) => {
+    setContact(user);
+    setMessages([]);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={styles.appRoot}>
+      <div className={styles.contacts}>
+        <h2>Contacts</h2>
+        <ul>
+          {users.map((user) => (
+            <li
+              className={user.name === contact.name ? styles.selected : ""}
+              onClick={() => selectUser(user)}
+            >
+              {user.name}
+            </li>
+          ))}
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className={styles.chat}>
+        <h2>Chat</h2>
+        <div className={styles.messageInput}>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+        <div className={styles.messages}>
+          {messages.map((message) => (
+            <div className={`message ${styles[message.type]}`}>
+              <span>{message.message}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
